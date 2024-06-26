@@ -1,0 +1,123 @@
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { fetchCountries } from '../api/countries';
+import { getCountryImage } from '../api/unsplash';
+import CountryList from '../components/CountryList';
+import SearchBar from '../components/SearchBar';
+import ScrollTopButton from '../components/ScrollTopButton';
+import { Country } from '../types/Country';
+
+const PageContainer = styled.div`
+    width: 1020px;
+    margin: 0 auto;
+
+    @media only screen and (max-width: 1068px) {
+        width: 700px;
+    }
+
+    @media only screen and (max-width: 734px) {
+        width: 85%;
+    }
+`;
+
+const Title = styled.h1`
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    @media only screen and (max-width: 734px) {
+        font-size: 23px;
+    }
+`;
+
+const NoResultsMessage = styled.p`
+    margin-bottom: 30px;
+    font-size: 16px;
+    color: #b7b7b7;
+`;
+
+const Home: React.FC = () => {
+    const [countries, setCountries] = useState<Country[]>([]); // 국가 목록 상태
+    const [favoriteCountries, setFavoriteCountries] = useState<Country[]>([]); // 좋아요한 국가 목록 상태
+    const [searchCountry, setSearchCountry] = useState(''); // 검색어 상태
+    const [flags, setFlags] = useState<{ [key: string]: string | null }>({}); // 국가 이미지 상태
+
+    // 컴포넌트가 처음 렌더링될 때 국가 데이터를 가져옴
+    useEffect(() => {
+        const getCountries = async () => {
+            try {
+                //각 국가 데이터를 가져옴
+                const data = await fetchCountries();
+                setCountries(data);
+
+                // 각 국가에 대해 이미지를 가져옴
+                const imagePromises = data.map(async (country: Country) => {
+                    const url = await getCountryImage(country.name.common);
+                    return { [country.name.common]: url };
+                });
+
+                // 모든 이미지를 동시에 가져와서 배열을 객체로 변환한후에 상태에 저장한다.
+                const imageResults = await Promise.all(imagePromises);
+                const imageMap = imageResults.reduce((acc, img) => ({ ...acc, ...img }), {});
+                setFlags(imageMap);
+            } catch (error) {
+                console.error('국가 또는 이미지를 불러오는 중 오류가 발생했습니다:', error);
+            }
+        };
+        getCountries();
+    }, []);
+
+    // 즐겨찾기 토글 함수
+    const handleToggleFavorite = (country: Country) => {
+        /// 이미 즐겨찾기에 있다면 제거
+        if (favoriteCountries.includes(country)) {
+            setFavoriteCountries(favoriteCountries.filter((fav) => fav.cca3 !== country.cca3));
+        } else {
+            // 없다면 추가
+            setFavoriteCountries([...favoriteCountries, country]);
+        }
+    };
+
+    // 검색어 함수
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchCountry(event.target.value);
+    };
+
+    // 검색어에 맞는 국가 필터링
+    const filteredCountries = countries.filter((country) =>
+        country.name.common.toLowerCase().includes(searchCountry.toLowerCase())
+    );
+
+    // 즐겨찾기에 없는 국가 필터링
+    const nonFavoriteCountries = filteredCountries.filter((country) => !favoriteCountries.includes(country));
+
+    return (
+        <PageContainer>
+            <SearchBar value={searchCountry} onSearchChange={handleSearchChange} />
+            <Title>Favorite Countries🛫</Title>
+            {favoriteCountries.length > 0 ? (
+                <CountryList
+                    countries={favoriteCountries}
+                    onToggleFavorite={handleToggleFavorite}
+                    images={flags}
+                    favoriteCountries={favoriteCountries}
+                />
+            ) : (
+                <NoResultsMessage>Choose your favorite country.</NoResultsMessage>
+            )}
+            <Title>Countries🌍</Title>
+            {nonFavoriteCountries.length > 0 ? (
+                <CountryList
+                    countries={nonFavoriteCountries}
+                    onToggleFavorite={handleToggleFavorite}
+                    images={flags}
+                    favoriteCountries={favoriteCountries}
+                />
+            ) : (
+                <NoResultsMessage>No search results found.🤔</NoResultsMessage>
+            )}
+            <ScrollTopButton />
+        </PageContainer>
+    );
+};
+
+export default Home;
