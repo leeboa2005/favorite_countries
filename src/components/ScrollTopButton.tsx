@@ -6,8 +6,7 @@ const TopButton = styled.button<{ $isVisible: boolean }>`
     bottom: 30px;
     right: 30px;
     background-color: transparent;
-    color: #333;
-    border: none;
+    color: var(--text-color);
     padding: 10px 15px;
     font-size: 30px;
     cursor: pointer;

@@ -8,8 +8,8 @@ const SearchContainer = styled.div`
     width: 100%;
     max-width: 1020px;
     margin: 20px 0;
-    background-color: #fff;
-    border: 1px solid #ddd;
+    background-color: var(--white-color);
+    border: var(--default-border);
     border-radius: 24px;
     padding: 8px 16px;
     box-shadow: 0 1px 6px rgba(152, 152, 152, 0.28);
@@ -25,16 +25,13 @@ const SearchContainer = styled.div`
 
 const SearchIcon = styled(FaSearch)`
     margin-right: 8px;
-    color: #999;
+    color: var(--gray-color);
 `;
 
 const SearchInput = styled.input`
     flex: 1;
     padding: 8px;
-    font-size: 16px;
-    border: none;
-    outline: none;
-    box-sizing: border-box;
+    font-size: var(--font-size-18);
 `;
 
 interface SearchBarProps {

@@ -13,8 +13,8 @@ interface CountryCardProps {
 const Card = styled.div`
     padding: 16px;
     border-radius: 8px;
-    border: 1px solid #ddd;
-    background-color: #fff;
+    border: var(--default-border);
+    background-color: var(--white-color);
     cursor: pointer;
     display: flex;
     flex-direction: column;
@@ -22,10 +22,6 @@ const Card = styled.div`
     text-align: center;
     position: relative;
     overflow: hidden;
-
-    &:hover {
-        background-color: #f0f0f0;
-    }
 `;
 
 const FlagImage = styled.img`
@@ -81,8 +77,8 @@ const Overlay = styled.div<{ $isVisible: boolean }>`
 const Button = styled.button`
     background: transparent;
     border: none;
-    color: #fff;
-    font-size: 24px;
+    color: var(--white-color);
+    font-size: var(--font-subtitle-size);
     cursor: pointer;
     z-index: 4;
 `;
