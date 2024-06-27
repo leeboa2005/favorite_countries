@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-const Button = styled.button<{ $isVisible: boolean }>`
+const TopButton = styled.button<{ $isVisible: boolean }>`
     position: fixed;
     bottom: 30px;
     right: 30px;
@@ -39,9 +39,9 @@ const ScrollToTopButton: React.FC = () => {
     }, []);
 
     return (
-        <Button $isVisible={isVisible} onClick={scrollToTop}>
+        <TopButton $isVisible={isVisible} onClick={scrollToTop}>
             ✈️
-        </Button>
+        </TopButton>
     );
 };
 

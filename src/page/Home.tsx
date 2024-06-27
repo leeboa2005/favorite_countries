@@ -6,6 +6,8 @@ import CountryList from '../components/CountryList';
 import SearchBar from '../components/SearchBar';
 import ScrollTopButton from '../components/ScrollTopButton';
 import { Country } from '../types/Country';
+import Lottie from 'react-lottie-player';
+import airplaneAnimation from '../assets/loading-airplane.json';
 
 const PageContainer = styled.div`
     width: 1020px;
@@ -35,17 +37,25 @@ const NoResultsMessage = styled.p`
     color: #b7b7b7;
 `;
 
+const LoadingContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60vh;
+`;
+
 const Home: React.FC = () => {
     const [countries, setCountries] = useState<Country[]>([]); // 국가 목록 상태
     const [favoriteCountries, setFavoriteCountries] = useState<Country[]>([]); // 좋아요한 국가 목록 상태
     const [searchCountry, setSearchCountry] = useState(''); // 검색어 상태
     const [flags, setFlags] = useState<{ [key: string]: string | null }>({}); // 국가 이미지 상태
+    const [isLoading, setIsLoading] = useState<boolean>(true); // 로딩 상태
 
     // 컴포넌트가 처음 렌더링될 때 국가 데이터를 가져옴
     useEffect(() => {
         const getCountries = async () => {
             try {
-                //각 국가 데이터를 가져옴
+                // 각 국가 데이터를 가져옴
                 const data = await fetchCountries();
                 setCountries(data);
 
@@ -55,12 +65,14 @@ const Home: React.FC = () => {
                     return { [country.name.common]: url };
                 });
 
-                // 모든 이미지를 동시에 가져와서 배열을 객체로 변환한후에 상태에 저장한다.
+                // 모든 이미지를 동시에 가져와서 배열을 객체로 변환한 후 상태에 저장한다.
                 const imageResults = await Promise.all(imagePromises);
                 const imageMap = imageResults.reduce((acc, img) => ({ ...acc, ...img }), {});
                 setFlags(imageMap);
+                setIsLoading(false); // 데이터 로딩 완료
             } catch (error) {
                 console.error('국가 또는 이미지를 불러오는 중 오류가 발생했습니다:', error);
+                setIsLoading(false); // 오류 발생 시에도 로딩 상태를 해제
             }
         };
         getCountries();
@@ -68,7 +80,7 @@ const Home: React.FC = () => {
 
     // 즐겨찾기 토글 함수
     const handleToggleFavorite = (country: Country) => {
-        /// 이미 즐겨찾기에 있다면 제거
+        // 이미 즐겨찾기에 있다면 제거
         if (favoriteCountries.includes(country)) {
             setFavoriteCountries(favoriteCountries.filter((fav) => fav.cca3 !== country.cca3));
         } else {
@@ -105,7 +117,11 @@ const Home: React.FC = () => {
                 <NoResultsMessage>Choose your favorite country.</NoResultsMessage>
             )}
             <Title>Countries🌍</Title>
-            {nonFavoriteCountries.length > 0 ? (
+            {isLoading ? (
+                <LoadingContainer>
+                    <Lottie animationData={airplaneAnimation} play loop style={{ height: '200px', width: '200px' }} />
+                </LoadingContainer>
+            ) : nonFavoriteCountries.length > 0 ? (
                 <CountryList
                     countries={nonFavoriteCountries}
                     onToggleFavorite={handleToggleFavorite}
