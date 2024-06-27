@@ -16,10 +16,11 @@ const SearchContainer = styled.div`
 
     @media only screen and (max-width: 1068px) {
         max-width: 700px;
+        padding: 4px 12px;
     }
 
     @media only screen and (max-width: 734px) {
-        max-width: 85%;
+        max-width: 90%;
     }
 `;
 
