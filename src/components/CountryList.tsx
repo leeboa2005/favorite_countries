@@ -21,7 +21,7 @@ const List = styled.div`
 const CountryList: React.FC<CountryListProps> = ({ countries, onToggleFavorite, images, favoriteCountries }) => {
     return (
         <List>
-            {countries.map((country: Country) => {
+            {countries.map((country) => {
                 return (
                     <CountryCard
                         key={country.cca3}
