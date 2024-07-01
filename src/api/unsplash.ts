@@ -1,11 +1,12 @@
 import axios from 'axios';
 
 const UNSPLASH_ACCESS_KEY = import.meta.env.VITE_UNSPLASH_ACCESS_KEY;
-const DEFAULT_IMAGE_URL = 'https://cdn.pixabay.com/photo/2019/12/21/13/53/sea-4710533_1280.jpg'; // 기본 이미지 URL
+const UNSPLASH_ACCESS_URL = import.meta.env.VITE_UNSPLASH_ACCESS_URL;
+const DEFAULT_IMAGE_URL = 'https://cdn.pixabay.com/photo/2019/12/21/13/53/sea-4710533_1280.jpg';
 
 export const getCountryImage = async (countryName: string) => {
     try {
-        const response = await axios.get('https://api.unsplash.com/search/photos', {
+        const response = await axios.get(UNSPLASH_ACCESS_URL, {
             params: {
                 query: countryName, // countryName을 검색
                 client_id: UNSPLASH_ACCESS_KEY,
